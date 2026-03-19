@@ -1,0 +1,1 @@
+# FossilFrame core package
