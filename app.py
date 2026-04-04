@@ -27,7 +27,7 @@ except Exception:
     bg_base64 = ''
     default_img_src = ''
 
-st.set_page_config(page_title="FossilFrame", layout="wide", page_icon="🔬")
+st.set_page_config(page_title="FossilFrame", layout="wide", page_icon="Header.jpg")
 
 css = """
 <style>
@@ -230,7 +230,7 @@ st.markdown(css, unsafe_allow_html=True)
 st.markdown("""
 <div class="ff-header">
     <div class="ff-header-left">
-        <div class="main-title">FOSSIL FRAME</div>
+        <div class="main-title">FossilFrame</div>
         <div class="sub-title">Quantum-Inspired Virtual Microscope</div>
     </div>
 </div>
@@ -331,7 +331,7 @@ if f is not None:
                 st.caption("Phase-fused sharpening applied")
 
             st.divider()
-            st.markdown("### PIPELINE METRICS")
+            st.markdown("PIPELINE METRICS")
 
             from skimage.metrics import peak_signal_noise_ratio as psnr
             from skimage.metrics import structural_similarity as ssim
@@ -358,7 +358,7 @@ if f is not None:
 
             with col_content:
                 st.divider()
-                st.markdown("### QISKIT CIRCUIT")
+                st.markdown("Quantum Circuit")
                 fig2, ax2 = plt.subplots(figsize=(12, 3))
                 fig2.patch.set_facecolor("#050505")
                 qc_draw = build(qb, dep)
