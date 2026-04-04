@@ -18,7 +18,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PATH_TO_BG = os.path.join(BASE_DIR, 'core', 'assets', 'Body.jpg')
+PATH_TO_BG = os.path.join(BASE_DIR, 'core', 'assets', 'Body.png')
 
 try:
     bg_base64 = get_base64_of_bin_file(PATH_TO_BG)
@@ -35,34 +35,39 @@ css = """
 
 *, *::before, *::after { box-sizing: border-box; }
 
+html, body {
+    overflow-x: hidden !important;
+}
+
 [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
 [data-testid="stHeader"] { display: none !important; }
 [data-testid="stAppViewContainer"], .stApp {
     background: #050505 !important;
-    overflow: visible !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
 }
 [data-testid="stVerticalBlock"] {
     overflow: visible !important;
 }
 [data-testid="block-container"] {
-    padding: 160px 40px 3rem 40px !important;
-    max-width: 100% !important;
+    padding: clamp(100px, 15vh, 160px) clamp(1rem, 4vw, 40px) 3rem clamp(1rem, 4vw, 40px) !important;
+    max-width: 100vw !important;
     margin: 0 !important;
     background: transparent !important;
-    overflow: visible !important;
+    overflow-x: hidden !important;
 }
 
 .ff-header {
     position: fixed;
     top: 0; left: 0;
-    width: 100%;
+    width: 100vw;
     z-index: 1000;
     background: #050505;
     border-bottom: 1px solid #1e1e1e;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 40px;
+    padding: clamp(10px, 2vh, 16px) clamp(1rem, 4vw, 40px);
 }
 .ff-header-left {
     display: flex;
@@ -74,7 +79,7 @@ css = """
 .main-title {
     font-family: 'Oswald', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 5rem !important;
+    font-size: clamp(2.5rem, 6vw, 5rem) !important;
     text-transform: uppercase;
     letter-spacing: 4px;
     color: #e8d070 !important;
@@ -86,8 +91,8 @@ css = """
 .sub-title {
     font-family: 'Montserrat', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 0.85rem !important;
-    letter-spacing: 4px;
+    font-size: clamp(0.6rem, 2vw, 0.85rem) !important;
+    letter-spacing: clamp(1px, 0.5vw, 4px);
     color: #a0a0a0 !important;
     text-transform: uppercase;
     margin: 4px 0 0 0 !important;
@@ -98,7 +103,7 @@ css = """
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    width: 65vw;
+    width: clamp(250px, 60vw, 65vw);
     opacity: 0.8;
     z-index: 9999;
     pointer-events: none;
@@ -115,10 +120,10 @@ css = """
 }
 #spino-wrapper.logo-mode {
     top: 10px;
-    right: 40px;
+    right: clamp(10px, 4vw, 40px);
     transform: translateY(0);
-    width: 120px;
-    height: 120px;
+    width: clamp(60px, 15vw, 120px);
+    height: clamp(60px, 15vw, 120px);
     opacity: 0.3;
     z-index: 1001;
 }
@@ -134,11 +139,23 @@ h3, h4 {
     color: #e0e0e0 !important;
 }
 
+@keyframes float-light {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes float-heavy {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+    100% { transform: translateY(0px); }
+}
+
 [data-testid="stImage"], [data-testid="stArrowChart"] {
     background-color: #050505 !important;
     padding: 15px;
     border: 1px solid #d4af37;
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 0 20px rgba(212,175,55,0.35), 0 10px 30px rgba(0,0,0,0.9);
     position: relative;
     z-index: 100;
@@ -147,6 +164,10 @@ h3, h4 {
     justify-content: center;
     align-items: center;
     min-height: 200px;
+    animation: float-light 6s ease-in-out infinite;
+}
+[data-testid="stImage"]:nth-child(even) {
+    animation-delay: 1.5s;
 }
 [data-testid="stImage"] img {
     opacity: 1 !important;
@@ -163,7 +184,7 @@ h3, h4 {
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: 300;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 0.8rem 2rem;
     width: 100%;
     transition: all 0.3s ease;
@@ -178,13 +199,13 @@ h3, h4 {
 [data-testid="stFileUploader"] {
     background-color: rgba(17,17,17,0.85) !important;
     border: 1px solid #2a2a2a !important;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 1rem;
 }
 .stSelectbox>div>div {
     background-color: rgba(17,17,17,0.85) !important;
     border: 1px solid #2a2a2a !important;
-    border-radius: 4px;
+    border-radius: 8px;
     color: #d4af37;
 }
 
@@ -205,24 +226,60 @@ div[data-testid="stSliderTickBar"] {
     border-bottom: none;
 }
 
-[data-testid="stMetric"] {
-    background-color: rgba(17,17,17,0.85);
-    border: 1px solid #2a2a2a;
-    border-left: 2px solid #d4af37;
-    border-radius: 4px;
-    padding: 1rem;
+/* Custom Responsive Flex Container for Metrics */
+.metrics-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
 }
+
 .metric-box {
     background: rgba(17,17,17,0.85);
     border: 1px solid #2a2a2a;
     border-top: 2px solid #d4af37;
-    border-radius: 4px;
-    padding: 1rem;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
     text-align: center;
+    flex: 1 1 clamp(120px, 15vw, 150px);
+    animation: float-heavy 5s ease-in-out infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 110px;
 }
-.metric-val { font-size: 2rem; font-weight: 400; color: #d4af37 !important; }
-.metric-lbl { font-size: 0.75rem; color: #8c8c8c !important; letter-spacing: 2px; text-transform: uppercase; }
+.metric-box:nth-child(2) { animation-delay: 0.5s; }
+.metric-box:nth-child(3) { animation-delay: 1.0s; }
+.metric-box:nth-child(4) { animation-delay: 1.5s; }
+.metric-box:nth-child(5) { animation-delay: 2.0s; }
+
+.metric-val { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 400; color: #d4af37 !important; }
+.metric-lbl { font-size: clamp(0.6rem, 1vw, 0.75rem); color: #8c8c8c !important; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
 [data-testid="stDivider"] { border-color: #2a2a2a; }
+
+/* Media Queries for Mobile Layout Stability */
+@media (max-width: 768px) {
+    #spino-wrapper {
+        opacity: 0.25;
+        width: 80vw;
+        top: 60%;
+    }
+    #spino-wrapper.logo-mode {
+        opacity: 0.2;
+    }
+    .metrics-container {
+        gap: 0.5rem;
+    }
+    .metric-box {
+        padding: 1rem 0.5rem;
+    }
+    [data-testid="block-container"] {
+        padding-top: 100px !important;
+    }
+}
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
@@ -344,17 +401,16 @@ if f is not None:
             psnr_q_display = psnr_q if np.isfinite(psnr_q) else 0.0
             gain = ((psnr_q_display - psnr_c_safe) / max(psnr_c_safe, 1)) * 100
 
-            m1, m2, m3, m4, m5 = st.columns(5)
-            with m1:
-                st.markdown(f'<div class="metric-box"><div class="metric-val">{psnr_q:.1f}</div><div class="metric-lbl">PSNR (dB)</div></div>', unsafe_allow_html=True)
-            with m2:
-                st.markdown(f'<div class="metric-box"><div class="metric-val">{ssim_q:.2f}</div><div class="metric-lbl">SSIM</div></div>', unsafe_allow_html=True)
-            with m3:
-                st.markdown(f'<div class="metric-box"><div class="metric-val">{gain:.1f}%</div><div class="metric-lbl">GAIN</div></div>', unsafe_allow_html=True)
-            with m4:
-                st.markdown(f'<div class="metric-box"><div class="metric-val">{shots}</div><div class="metric-lbl">SHOTS</div></div>', unsafe_allow_html=True)
-            with m5:
-                st.markdown(f'<div class="metric-box"><div class="metric-val">{qb}q·d{dep}</div><div class="metric-lbl">CIRCUIT</div></div>', unsafe_allow_html=True)
+            metrics_html = f"""
+            <div class="metrics-container">
+                <div class="metric-box"><div class="metric-val">{psnr_q:.1f}</div><div class="metric-lbl">PSNR (dB)</div></div>
+                <div class="metric-box"><div class="metric-val">{ssim_q:.2f}</div><div class="metric-lbl">SSIM</div></div>
+                <div class="metric-box"><div class="metric-val">{gain:.1f}%</div><div class="metric-lbl">GAIN</div></div>
+                <div class="metric-box"><div class="metric-val">{shots}</div><div class="metric-lbl">SHOTS</div></div>
+                <div class="metric-box"><div class="metric-val">{qb}q·d{dep}</div><div class="metric-lbl">CIRCUIT</div></div>
+            </div>
+            """
+            st.markdown(metrics_html, unsafe_allow_html=True)
 
             with col_content:
                 st.divider()
