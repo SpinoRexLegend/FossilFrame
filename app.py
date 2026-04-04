@@ -15,16 +15,29 @@ def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
     return base64.b64encode(data).decode()
+import os
+
+# --- CONFIGURATION ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PATH_TO_BG = os.path.join(BASE_DIR, 'core', 'assets', 'Body.jpg')
+PATH_TO_LOGO = os.path.join(BASE_DIR, 'core', 'assets', 'Header.jpg')
+# ---------------------
 
 try:
-    img_base64 = get_base64_of_bin_file('bg.png')
+    bg_base64 = get_base64_of_bin_file(PATH_TO_BG)
     bg_css = f'''
-    background-image: 
-        linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 32%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0.3) 100%),
-        url("data:image/png;base64,{img_base64}");
-    '''
+background-image: 
+    linear-gradient(to right, #050505 0%, #050505 30%, rgba(5,5,5,0.3) 50%, transparent 70%),
+    url("data:image/jpeg;base64,{bg_base64}");
+''' 
 except Exception:
     bg_css = "background-image: none;"
+
+try:
+    logo_base64 = get_base64_of_bin_file(PATH_TO_LOGO)
+    logo_html = f'<img src="data:image/jpeg;base64,{logo_base64}" style="height: 1.1em; object-fit: contain; filter: sepia(1) hue-rotate(15deg) brightness(1.3) contrast(1.1) opacity(0.9); margin-bottom: 8px;">'
+except Exception:
+    logo_html = ""
 
 st.set_page_config(page_title="FossilFrame", layout="wide", page_icon="🔬")
 
@@ -35,18 +48,30 @@ css_template = """
 [data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; }
 [data-testid="stHeader"] { background-color: transparent; }
 [data-testid="block-container"] {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-    max-width: 1600px;
+    padding: 2rem 40px 3rem 40px !important;
+    max-width: 100% !important;
+    margin: 0 !important;
 }
 .stApp {
     background-color: #050505;
+}
+.fossil-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -1;
+    pointer-events: none;
     __BG_CSS__
-    background-size: cover, contain;
+    background-size: cover, 80vw auto; 
     background-repeat: no-repeat, no-repeat;
-    background-position: left top, __BG_POSITION__;
-    background-attachment: fixed, fixed;
-    transition: background-position 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    background-position: left top, right center;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+    filter: brightness(1.25) contrast(1.15);
+}
+.fossil-bg.hidden {
+    opacity: 0;
+    transform: translateX(100px);
 }
 h1, h2, h3, h4, p, label, div, span, li {
     font-family: 'Inter', sans-serif !important;
@@ -54,24 +79,28 @@ h1, h2, h3, h4, p, label, div, span, li {
 }
 
 .main-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     font-family: 'Oswald', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 4rem !important;
+    font-size: 6rem !important;
     text-transform: uppercase;
     letter-spacing: 4px;
     color: #e8d070 !important; /* Cinematic soft gold */
-    line-height: 1.1 !important;
-    padding-bottom: 0.5rem !important;
+    line-height: 1 !important;
+    padding-bottom: 0px !important;
+    text-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
 }
 
 .sub-title {
     font-family: 'Montserrat', sans-serif !important;
     font-weight: 600 !important;
-    font-size: 1rem !important;
-    letter-spacing: 2px;
-    color: #8c8c8c !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 4px;
+    color: #a0a0a0 !important;
     text-transform: uppercase;
-    margin-bottom: 1.5rem !important;
+    margin-bottom: 3rem !important;
 }
 
 h3, h4 {
@@ -83,14 +112,25 @@ h3, h4 {
 
 /* Image Results Containers */
 [data-testid="stImage"], [data-testid="stArrowChart"] {
-    background-color: rgba(11, 11, 11, 0.92) !important;
-    padding: 12px;
-    border: 1px solid #2a2a2a;
-    border-bottom: 2px solid #d4af37;
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+    background-color: #050505 !important;
+    padding: 15px;
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), 0 10px 30px rgba(0, 0, 0, 0.9);
     position: relative;
-    z-index: 10;
+    z-index: 100;
+    opacity: 1 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px; /* Fallback height to prevent bounding box collapse */
+}
+[data-testid="stImage"] img {
+    opacity: 1 !important;
+    position: relative;
+    z-index: 101;
+    max-width: 100% !important;
+    height: auto !important;
 }
 
 /* Button */
@@ -181,7 +221,7 @@ div[data-testid="stSliderTickBar"] {
 </style>
 """
 
-st.markdown('<div class="main-title">FOSSIL FRAME</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="main-title">{logo_html}FOSSIL FRAME</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Quantum-Inspired Virtual Microscope</div>', unsafe_allow_html=True)
 st.divider()
 
@@ -191,11 +231,26 @@ with col_controls:
     f = st.file_uploader("Upload Fossil Image", type=["png","jpg","jpeg","tiff"])
     
     # Dynamic CSS rendering based on App state
-    bg_position = "calc(100% + 50vw) center" if f is not None else "right center"
-    
-    final_css = css_template.replace("__BG_CSS__", bg_css) \
-                            .replace("__BG_POSITION__", bg_position)
+    final_css = css_template.replace("__BG_CSS__", bg_css)
     st.markdown(final_css, unsafe_allow_html=True)
+    
+    # Mount persistent background DOM node strictly as a static string to prevent React teardown
+    st.markdown('<div class="fossil-bg"></div>', unsafe_allow_html=True)
+    
+    # Trigger CSS transition independently via Javascript to bypass React DOM teardown
+    import streamlit.components.v1 as components
+    components.html(f"""
+    <script>
+        const bgs = window.parent.document.querySelectorAll('.fossil-bg');
+        bgs.forEach(bg => {{
+            if ("{str(f is not None).lower()}" === "true") {{
+                bg.classList.add('hidden');
+            }} else {{
+                bg.classList.remove('hidden');
+            }}
+        }});
+    </script>
+    """, height=0, width=0)
     st.markdown("<br>", unsafe_allow_html=True)
     sig = st.slider("Diffraction σ", 1, 10, 4)
     dep = st.slider("Circuit Depth", 1, 6, 3)
@@ -223,7 +278,7 @@ with col_content:
         with col1:
             st.markdown("#### CLASSICAL OUTPUT")
             blurred = diffract(img, sig)
-            st.image(blurred, width='stretch', clamp=True)
+            st.image(blurred, use_container_width=True, clamp=True)
             st.caption(f"Diffraction blur σ={sig}")
 
         if run_btn:
