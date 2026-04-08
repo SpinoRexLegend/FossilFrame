@@ -6,6 +6,12 @@ FossilFrame is a hybrid computational pipeline designed to enhance fossil images
 
 ---
 
+## ⚠️ Live Demo Note  
+The live demo is hosted on a free-tier service and may occasionally be unavailable due to server sleep cycles or hosting limitations.  
+For a complete and reliable demonstration of all features, please refer to the video walkthrough.
+
+---
+
 ## Core Concept  
 Optical microscopes are fundamentally limited by the diffraction limit, which prevents the resolution of extremely fine structures. As a result, a portion of critical biological and structural information remains inaccessible.
 
@@ -74,5 +80,5 @@ Leverages deep learning models (TensorFlow/PyTorch) to reconstruct enhanced imag
 ---
 
 ## Links  
-- GitHub Repository: https://github.com/SpinoRexLegend/FossilFrame
-- Live Demo: https://fossilframe.onrender.com/
+- GitHub Repository: https://github.com/SpinoRexLegend/FossilFrame  
+- Live Demo: https://fossilframe.onrender.com/  
